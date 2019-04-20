@@ -74,7 +74,10 @@ if __name__ == '__main__':
     from data import BaseTransform, VOC_CLASSES as labelmap
     from ssd import build_ssd
 
-    net = build_ssd('test', 300, 21)    # initialize SSD
+    # net = build_ssd('test', 300, 21)    # initialize SSD
+    net = build_ssd('test', 300, 46)    # initialize SSD for huawei  RyzeJiang
+
+
     net.load_state_dict(torch.load(args.weights))
     transform = BaseTransform(net.size, (104/256.0, 117/256.0, 123/256.0))
 

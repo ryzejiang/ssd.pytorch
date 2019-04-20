@@ -29,7 +29,12 @@ class SSD(nn.Module):
         super(SSD, self).__init__()
         self.phase = phase
         self.num_classes = num_classes
-        self.cfg = (coco, voc)[num_classes == 21]
+
+
+        # self.cfg = (coco, voc)[num_classes == 21]
+        self.cfg = (coco, voc)[num_classes == 46]   # RyzeJiang
+
+
         self.priorbox = PriorBox(self.cfg)
         self.priors = Variable(self.priorbox.forward(), volatile=True)
         self.size = size
@@ -37,7 +42,12 @@ class SSD(nn.Module):
         # SSD network
         self.vgg = nn.ModuleList(base)
         # Layer learns to scale the l2 normalized features from conv4_3
+
+
         self.L2Norm = L2Norm(512, 20)
+        # self.L2Norm = L2Norm(512, 45)   # RyzeJiang  好像没用
+
+
         self.extras = nn.ModuleList(extras)
 
         self.loc = nn.ModuleList(head[0])
@@ -166,7 +176,12 @@ def add_extras(cfg, i, batch_norm=False):
 def multibox(vgg, extra_layers, cfg, num_classes):
     loc_layers = []
     conf_layers = []
+
+
     vgg_source = [21, -2]
+    # vgg_source = [46, -2]   # RyzeJiang  好像没用
+
+
     for k, v in enumerate(vgg_source):
         loc_layers += [nn.Conv2d(vgg[v].out_channels,
                                  cfg[k] * 4, kernel_size=3, padding=1)]
@@ -195,7 +210,9 @@ mbox = {
 }
 
 
-def build_ssd(phase, size=300, num_classes=21):
+# def build_ssd(phase, size=300, num_classes=21):
+# RyzeJiang
+def build_ssd(phase, size=300, num_classes=46):
     if phase != "test" and phase != "train":
         print("ERROR: Phase: " + phase + " not recognized")
         return
